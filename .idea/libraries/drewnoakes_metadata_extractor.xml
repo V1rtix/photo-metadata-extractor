@@ -6,6 +6,8 @@
       <root url="jar://$PROJECT_DIR$/lib/xmpcore-6.1.11.jar!/" />
     </CLASSES>
     <JAVADOC />
-    <SOURCES />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.ideaLibSources/metadata-extractor-2.19.0-sources.jar!/" />
+    </SOURCES>
   </library>
 </component>
