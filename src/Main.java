@@ -2,7 +2,12 @@ import com.drew.imaging.ImageMetadataReader;
 import com.drew.imaging.ImageProcessingException;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
+
+import javax.imageio.ImageIO;
+
 import static com.drew.metadata.exif.ExifSubIFDDirectory.*;
+
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.Objects;
@@ -10,10 +15,15 @@ import java.util.Objects;
 public class Main {
     public static void main(String[] args) {
 
-        File photoFolder = new File("photos");
+        File photoFolder = new File("C:\\Users\\vikto\\OneDrive\\Obrázky\\SONY CAMERA\\Červenec\\Rumunsko\\bukurest");
 
         try {
             for (File file : Objects.requireNonNull(photoFolder.listFiles())) {
+                BufferedImage image = ImageIO.read(file);
+                if (image == null){
+                    System.out.println("Skipping " + file.getName());
+                    continue;
+                }
                 processPhoto(file);
             }
         } catch (ImageProcessingException | IOException e) {
@@ -31,13 +41,14 @@ public class Main {
             if (iso == null) iso = dir.getDescription(TAG_ISO_EQUIVALENT);
             if (exposureTime == null) exposureTime = dir.getDescription(TAG_EXPOSURE_TIME);
         }
-        if (photo.getName().toLowerCase().endsWith(".arw") && exposureTime != null) exposureTime = transferExposureTime(exposureTime);
+        exposureTime = transferExposureTime(exposureTime);
 
         System.out.println(photo.getName() + " - " + focalLength + " | " + fNumber + " | ISO-" + iso + " | " + exposureTime);
     }
     // Method that transfers Exposure time from decimal to fractional version (0,02 sec -> 1/50 sec)
-    // Only for .ARW files because metadata in .JPEG are already in fractional version
     private static String transferExposureTime(String exposureTime) {
+        if (exposureTime == null) return null;
+        if (exposureTime.contains("/")) return exposureTime;
         double time = Double.parseDouble(exposureTime.replace(" sec", ""));
         if (time >= 1){
             return time + " sec";
