@@ -1,22 +1,22 @@
+package MetadataExtractionApp;
+
 import com.drew.imaging.ImageMetadataReader;
 import com.drew.imaging.ImageProcessingException;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 
 import javax.imageio.ImageIO;
-
-import static com.drew.metadata.exif.ExifSubIFDDirectory.*;
-
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.Objects;
 
-public class Main {
-    public static void main(String[] args) {
+import static com.drew.metadata.exif.ExifDirectoryBase.*;
+import static com.drew.metadata.exif.ExifDirectoryBase.TAG_EXPOSURE_TIME;
 
-        File photoFolder = new File("C:\\Users\\vikto\\OneDrive\\Obrázky\\SONY CAMERA\\Červenec\\Rumunsko\\bukurest");
+public class MetadataExtraction {
 
+    public static void photosToProcess(File photoFolder) {
         try {
             for (File file : Objects.requireNonNull(photoFolder.listFiles())) {
                 BufferedImage image = ImageIO.read(file);
@@ -31,7 +31,7 @@ public class Main {
         }
     }
 
-    private static void processPhoto(File photo) throws ImageProcessingException, IOException {
+    static void processPhoto(File photo) throws ImageProcessingException, IOException {
         Metadata metadata = ImageMetadataReader.readMetadata(photo);
         String focalLength = null;String fNumber = null;String iso = null;String exposureTime = null;
 
@@ -43,8 +43,9 @@ public class Main {
         }
         exposureTime = transferExposureTime(exposureTime);
 
-        System.out.println(photo.getName() + " - " + focalLength + " | " + fNumber + " | ISO-" + iso + " | " + exposureTime);
+        System.out.println(" - " + focalLength + " | " + fNumber + " | ISO-" + iso + " | " + exposureTime);
     }
+
     // Method that transfers Exposure time from decimal to fractional version (0,02 sec -> 1/50 sec)
     private static String transferExposureTime(String exposureTime) {
         if (exposureTime == null) return null;
