@@ -5,35 +5,19 @@ import com.drew.imaging.ImageProcessingException;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.Objects;
 
 import static com.drew.metadata.exif.ExifDirectoryBase.*;
-import static com.drew.metadata.exif.ExifDirectoryBase.TAG_EXPOSURE_TIME;
 
 public class MetadataExtraction {
 
-    public static void photosToProcess(File photoFolder) {
-        try {
-            for (File file : Objects.requireNonNull(photoFolder.listFiles())) {
-                BufferedImage image = ImageIO.read(file);
-                if (image == null){
-                    System.out.println("Skipping " + file.getName());
-                    continue;
-                }
-                processPhoto(file);
-            }
-        } catch (ImageProcessingException | IOException e) {
-            System.out.println("No photos to process, insert photos to process");
-        }
-    }
-
-    static void processPhoto(File photo) throws ImageProcessingException, IOException {
+    public static String[] processPhoto(File photo) throws ImageProcessingException, IOException {
         Metadata metadata = ImageMetadataReader.readMetadata(photo);
-        String focalLength = null;String fNumber = null;String iso = null;String exposureTime = null;
+        String focalLength = null;
+        String fNumber = null;
+        String iso = null;
+        String exposureTime = null;
 
         for (Directory dir : metadata.getDirectories()) {
             if (focalLength == null) focalLength = dir.getDescription(TAG_FOCAL_LENGTH);
@@ -43,10 +27,15 @@ public class MetadataExtraction {
         }
         exposureTime = transferExposureTime(exposureTime);
 
-        System.out.println(" - " + focalLength + " | " + fNumber + " | ISO-" + iso + " | " + exposureTime);
+        // Ošetření prázdných hodnot
+        focalLength = (focalLength != null) ? focalLength : "N/A";
+        fNumber = (fNumber != null) ? fNumber : "N/A";
+        iso = (iso != null) ? "ISO-" + iso : "N/A";
+        exposureTime = (exposureTime != null) ? exposureTime : "N/A";
+
+        return new String[]{focalLength, fNumber, iso, exposureTime};
     }
 
-    // Method that transfers Exposure time from decimal to fractional version (0,02 sec -> 1/50 sec)
     private static String transferExposureTime(String exposureTime) {
         if (exposureTime == null) return null;
         if (exposureTime.contains("/")) return exposureTime;
