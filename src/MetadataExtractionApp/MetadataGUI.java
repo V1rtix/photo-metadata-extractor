@@ -23,8 +23,8 @@ public class MetadataGUI extends JFrame {
 
     private CardLayout cardLayout;
     private JPanel cardPanel, fileListContainer, resultsContainer;
-    private List<File> uploadedFiles = new ArrayList<>();
-    private List<ResultRow> resultRows = new ArrayList<>();
+    final List<File> uploadedFiles = new ArrayList<>();
+    final List<ResultRow> resultRows = new ArrayList<>();
 
     private JToggleButton tglName, tglFocal, tglFNumber, tglIso, tglExposure;
 
@@ -35,7 +35,7 @@ public class MetadataGUI extends JFrame {
     private void init() {
         setTitle("Metadata Extraction");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(1150, 850); // Mírně širší pro lepší rozestupy
+        setSize(1150, 850);
         setLocationRelativeTo(null);
 
         cardLayout = new CardLayout();
@@ -108,7 +108,6 @@ public class MetadataGUI extends JFrame {
         topSection.setLayout(new BoxLayout(topSection, BoxLayout.Y_AXIS));
         topSection.setOpaque(false);
 
-        // 2. Results - Vycentrováno
         JLabel title = new JLabel("Results", SwingConstants.CENTER);
         title.setFont(new Font("Arial", Font.BOLD, 42));
         title.setForeground(Color.WHITE);
@@ -116,7 +115,6 @@ public class MetadataGUI extends JFrame {
         title.setBorder(new EmptyBorder(0, 0, 15, 0));
         topSection.add(title);
 
-        // 2. Include - Nalevo
         JLabel incLbl = new JLabel("Include:");
         incLbl.setForeground(Color.WHITE);
         incLbl.setFont(new Font("Arial", Font.BOLD, 20));
@@ -124,11 +122,10 @@ public class MetadataGUI extends JFrame {
         incLbl.setBorder(new EmptyBorder(0, 45, 10, 0));
         topSection.add(incLbl);
 
-        // 2. Tlačítka - Výška 55px, Zelená, Přesné lícování
         JPanel toggleRow = new JPanel(new GridLayout(1, 5, 25, 0));
         toggleRow.setOpaque(false);
         toggleRow.setMaximumSize(new Dimension(Integer.MAX_VALUE, 55));
-        toggleRow.setBorder(new EmptyBorder(0, 45, 0, 10)); // Stejný border jako u řádků níže
+        toggleRow.setBorder(new EmptyBorder(0, 45, 0, 10));
 
         tglName = createHeaderToggle("Filename");
         tglFocal = createHeaderToggle("Focal");
@@ -151,7 +148,6 @@ public class MetadataGUI extends JFrame {
         applyModernScrollbar(sp);
         panel.add(sp, BorderLayout.CENTER);
 
-        // Spodní tlačítka - Větší text
         JPanel footer = new JPanel(new BorderLayout());
         footer.setOpaque(false);
         JButton btnBack = createStyledButton("Back", btnDark, textLight, 18);
@@ -180,7 +176,6 @@ public class MetadataGUI extends JFrame {
         tgl.setFont(new Font("Arial", Font.BOLD, 16));
         tgl.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
-        // Vynucení vzhledu bez systémových vlivů
         tgl.setOpaque(true);
         tgl.setBorder(new LineBorder(accentGreen, 2));
 
@@ -200,7 +195,6 @@ public class MetadataGUI extends JFrame {
     }
 
     private void openFileChooser() {
-        // Tady je to okno co minule (image_fe93f7.png / nativní Windows)
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             JFileChooser jfc = new JFileChooser();
@@ -270,7 +264,7 @@ public class MetadataGUI extends JFrame {
                 sb.append(String.join(" | ", line)).append("\n");
             }
         }
-        if (sb.length() > 0) {
+        if (sb.isEmpty()) {
             java.awt.Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(sb.toString()), null);
             JOptionPane.showMessageDialog(this, "Copied!");
         }
@@ -297,10 +291,9 @@ public class MetadataGUI extends JFrame {
             ui.setOpaque(false);
             ui.setBorder(new EmptyBorder(0, 0, 8, 0));
 
-            // GridLayout(1, 5) - Identické mezery jako u tlačítek
             content = new JPanel(new GridLayout(1, 5, 25, 0));
             content.setBackground(bgSelected);
-            content.setBorder(new EmptyBorder(15, 45, 15, 10)); // Identický BorderX jako nahoře
+            content.setBorder(new EmptyBorder(15, 45, 15, 10));
             content.setMaximumSize(new Dimension(Integer.MAX_VALUE, 55));
 
             content.add(createVal(name));
